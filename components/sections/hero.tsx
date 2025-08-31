@@ -5,10 +5,14 @@ import { motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 import { seoContent } from "@/data/seo-content"
 import { useAnalytics } from "@/components/analytics/google-analytics"
+import { gsap, ScrollTrigger } from "@/lib/gsap"
 import Image from "next/image"
 
 export function Hero() {
   const heroRef = useRef<HTMLElement>(null)
+  const bgRef = useRef<HTMLDivElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
   const [isMobile, setIsMobile] = useState(false)
   const { trackReservationAttempt, trackSectionView } = useAnalytics()
 
@@ -21,6 +25,78 @@ export function Hero() {
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  // GSAP Scroll Animation - Desktop Only
+  useEffect(() => {
+    // Skip all scroll animations on mobile for performance
+    if (isMobile) return
+    if (!heroRef.current || !bgRef.current || !overlayRef.current || !contentRef.current) return
+
+    const hero = heroRef.current
+    const bg = bgRef.current
+    const overlay = overlayRef.current
+    const content = contentRef.current
+
+    // Background parallax effect - Desktop only
+    const bgTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: hero,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1.5,
+        invalidateOnRefresh: true,
+      }
+    })
+
+    // Refined parallax movement
+    bgTimeline
+      .to(bg, {
+        yPercent: -25,
+        scale: 1.1,
+        ease: "none",
+      })
+      .to(overlay, {
+        opacity: 0.9,
+        ease: "none",
+      }, 0)
+
+    // Content fade effect - Desktop only
+    const contentTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: hero,
+        start: "top top",
+        end: "50% top",
+        scrub: 1,
+        invalidateOnRefresh: true,
+      }
+    })
+
+    contentTimeline.to(content, {
+      opacity: 0,
+      y: -50,
+      ease: "none",
+    })
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.trigger === hero) {
+          trigger.kill()
+        }
+      })
+    }
+  }, [isMobile])
+
+  // Cleanup all scroll triggers when switching to mobile
+  useEffect(() => {
+    if (isMobile) {
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.trigger === heroRef.current) {
+          trigger.kill()
+        }
+      })
+    }
+  }, [isMobile])
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
@@ -39,16 +115,14 @@ export function Hero() {
       ref={heroRef}
       className="relative flex items-center justify-center overflow-hidden"
       style={{ 
-        height: '100vh',
         height: '100dvh',
         minHeight: '100vh',
-        minHeight: '100dvh',
         margin: 0,
         padding: 0
       }}
     >
-      {/* Background Image - Optimized for all devices */}
-      <div className="absolute inset-0 z-0">
+      {/* Background Image - Enhanced with Parallax */}
+      <div ref={bgRef} className={`absolute inset-0 z-0 ${!isMobile ? 'will-change-transform' : ''}`}>
         <Image
           src="/images/optimized/hero.webp"
           alt="Maison Cocktail ambiance"
@@ -58,15 +132,18 @@ export function Hero() {
           sizes="100vw"
           className="object-cover object-center"
           style={{ 
-            transform: isMobile ? 'scale(1.1)' : 'scale(1.05)',
+            transform: isMobile ? 'none' : 'scale(1.05)',
             filter: isMobile ? 'brightness(0.7)' : 'brightness(0.8)'
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-aristocrat-void/50 via-aristocrat-void/30 to-aristocrat-void/70 lg:from-aristocrat-void/40 lg:via-aristocrat-void/20 lg:to-aristocrat-void/60" />
+        <div 
+          ref={overlayRef}
+          className={`absolute inset-0 bg-gradient-to-b from-aristocrat-void/50 via-aristocrat-void/30 to-aristocrat-void/70 lg:from-aristocrat-void/40 lg:via-aristocrat-void/20 lg:to-aristocrat-void/60 ${!isMobile ? 'will-change-auto' : ''}`}
+        />
       </div>
 
       {/* Content - Refined Aristocrat Layout */}
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 w-full max-w-6xl mx-auto pt-20 md:pt-24">
+      <div ref={contentRef} className={`relative z-10 text-center px-4 sm:px-6 lg:px-8 w-full max-w-6xl mx-auto pt-20 md:pt-24 ${!isMobile ? 'will-change-transform' : ''}`}>
         {/* Tagline - Sophisticated Typography */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
