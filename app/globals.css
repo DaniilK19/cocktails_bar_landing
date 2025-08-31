@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-@import './responsive.css';
 
 @tailwind base;
 @tailwind components;
@@ -7,151 +6,377 @@
 
 @layer base {
   :root {
-    --background: 220 13% 5%;
+    /* Dark theme colors */
+    --background: 0 0% 4%;
     --foreground: 0 0% 95%;
-    --card: 220 10% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 220 10% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 0 0% 95%;
-    --primary-foreground: 220 13% 5%;
-    --secondary: 220 8% 12%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 220 8% 12%;
-    --muted-foreground: 0 0% 65%;
-    --accent: 220 8% 15%;
-    --accent-foreground: 0 0% 95%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 95%;
-    --border: 220 8% 15%;
-    --input: 220 8% 15%;
-    --ring: 0 0% 95%;
-    --radius: 0rem;
     
-    /* Minimal aristocratic palette */
+    /* Aristocrat palette */
     --aristocrat-white: 0 0% 95%;
     --aristocrat-cream: 30 8% 88%;
     --aristocrat-gray: 220 8% 40%;
     --aristocrat-charcoal: 220 10% 15%;
     --aristocrat-obsidian: 220 13% 8%;
-    --aristocrat-void: 220 13% 5%;
+    --aristocrat-void: 0 0% 4%;
   }
-}
 
-@layer base {
+  /* Reset and base styles */
   * {
-    @apply border-border;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  
+
+  html {
+    font-size: 16px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
     letter-spacing: -0.01em;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
   }
-  
-  /* Prevent hydration mismatches - unified classes for SSR */
-  .responsive-default {
-    /* Default state for SSR - no responsive modifiers */
+
+  /* Safari iOS fixes */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+    }
+    
+    /* Fix for Safari mobile viewport */
+    .h-screen {
+      height: 100vh;
+      height: -webkit-fill-available;
+    }
   }
-  
+
+  /* Typography - Mobile First */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.02em;
   }
-  
-  .serif {
-    font-family: 'Playfair Display', serif;
+
+  /* Mobile font sizes */
+  h1 {
+    font-size: clamp(1.75rem, 5vw, 4rem);
   }
-  
-  .sans {
-    font-family: 'Inter', system-ui, sans-serif;
+
+  h2 {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  h3 {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  p {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    line-height: 1.7;
+  }
+
+  /* Touch targets */
+  button, a, [role="button"] {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Prevent text selection on UI elements */
+  button, a, nav {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Images */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Forms */
+  input, textarea, select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+}
+
+@layer components {
+  /* Container - Mobile First */
+  .container {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 768px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1024px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1280px;
+    }
+  }
+
+  /* Section spacing - Mobile First */
+  .section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  @media (min-width: 640px) {
+    .section {
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .section {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+    }
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  /* Typography utilities */
+  .serif {
+    font-family: 'Playfair Display', Georgia, serif;
   }
-  
+
+  .sans {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Text sizes - Mobile First with clamp */
+  .text-hero {
+    font-size: clamp(2rem, 8vw, 6rem);
+    line-height: 1.1;
+  }
+
+  .text-title {
+    font-size: clamp(1.5rem, 5vw, 3.5rem);
+    line-height: 1.2;
+  }
+
+  .text-subtitle {
+    font-size: clamp(1.125rem, 3vw, 1.875rem);
+    line-height: 1.3;
+  }
+
+  .text-body {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    line-height: 1.7;
+  }
+
+  .text-small {
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+    line-height: 1.5;
+  }
+
+  /* Aristocrat theme utilities */
   .glass {
-    @apply backdrop-blur-sm bg-aristocrat-obsidian/30 border-0;
+    @apply backdrop-blur-md bg-aristocrat-obsidian/40 border border-aristocrat-charcoal/20;
   }
-  
+
   .glass-card {
-    @apply backdrop-blur-sm bg-aristocrat-obsidian/20 border border-aristocrat-charcoal/30;
+    @apply backdrop-blur-sm bg-aristocrat-obsidian/30 border border-aristocrat-charcoal/30;
   }
-  
-  .gradient-text {
-    @apply text-aristocrat-white;
-  }
-  
+
   .aristocrat-text {
-    @apply text-aristocrat-cream font-light tracking-wide leading-relaxed;
+    @apply text-aristocrat-cream font-light;
   }
-  
+
   .aristocrat-subtext {
-    @apply text-aristocrat-gray font-light tracking-widest text-sm uppercase;
+    @apply text-aristocrat-gray font-light tracking-wider text-small uppercase;
   }
-  
-  .minimal-border {
-    @apply border-t border-aristocrat-charcoal/50;
+
+  /* Button styles - Mobile optimized */
+  .aristocrat-button {
+    @apply relative inline-flex items-center justify-center;
+    @apply px-6 py-3 min-h-[44px];
+    @apply font-light tracking-wider text-small uppercase;
+    @apply text-aristocrat-cream/80 hover:text-aristocrat-white;
+    @apply transition-all duration-300;
+    @apply border border-aristocrat-gray/30 hover:border-aristocrat-cream/50;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
-  
+
+  /* Link styles - Mobile optimized */
   .aristocrat-link {
-    @apply relative font-light tracking-wider transition-all duration-500 
-           hover:text-aristocrat-cream hover:tracking-widest;
+    @apply relative font-light;
+    @apply text-aristocrat-cream hover:text-aristocrat-white;
+    @apply transition-colors duration-300;
+    padding: 0.5rem 0;
+    -webkit-tap-highlight-color: transparent;
   }
-  
+
   .aristocrat-link::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-0 h-px bg-aristocrat-cream 
-           transition-all duration-500 hover:w-full;
+    @apply absolute bottom-0 left-0 w-0 h-px bg-aristocrat-cream;
+    @apply transition-all duration-300;
   }
-  
-  .aristocrat-button {
-    @apply relative font-light tracking-widest text-sm uppercase 
-           text-aristocrat-cream/80 hover:text-aristocrat-white
-           transition-all duration-700;
-    letter-spacing: 0.2em;
-  }
-  
-  .aristocrat-button::before {
-    content: '';
-    @apply absolute inset-0 border border-aristocrat-gray/30 
-           transition-all duration-700;
-  }
-  
-  .aristocrat-button:hover::before {
-    @apply border-aristocrat-cream/50;
-  }
-  
-  .aristocrat-button::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-0 h-px bg-aristocrat-cream 
-           transition-all duration-700;
-  }
-  
-  .aristocrat-button:hover::after {
+
+  .aristocrat-link:hover::after {
     @apply w-full;
   }
 
+  /* Hide scrollbar */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Safe area padding for iOS */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Prevent scroll on body when modal is open */
+  .no-scroll {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
 }
 
-html {
-  scroll-behavior: initial;
+/* Mobile-specific optimizations */
+@media (max-width: 767px) {
+  /* Disable hover effects on mobile */
+  @media (hover: none) {
+    .aristocrat-button:hover,
+    .aristocrat-link:hover {
+      transform: none;
+    }
+
+    .aristocrat-link::after {
+      display: none;
+    }
+  }
+
+  /* Optimize animations for mobile */
+  * {
+    animation-duration: 0.3s !important;
+  }
+
+  /* Disable parallax on mobile */
+  .parallax-element {
+    transform: none !important;
+  }
 }
 
-body {
-  background: hsl(var(--background));
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Improve touch feedback */
+  button:active,
+  a:active,
+  [role="button"]:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+
+  /* Remove hover states */
+  *:hover {
+    transform: none !important;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  body {
+    @apply bg-black text-white;
+  }
+
+  .aristocrat-button {
+    @apply border-2 border-white;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    @apply bg-white text-black;
+  }
+
+  .no-print {
+    display: none !important;
+  }
 }

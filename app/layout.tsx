@@ -82,12 +82,22 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//maisoncocktail.fr" />
         <link rel="modulepreload" href="/_next/static/chunks/main.js" />
         <link rel="prefetch" href="/api/cocktails" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover" />
-        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="theme-color" content="#1A1A1A" />
+        <meta name="theme-color" content="#0A0A0A" />
+        {/* Safari specific fixes */}
+        <meta name="apple-touch-fullscreen" content="yes" />
+        <style dangerouslySetInnerHTML={{ __html: `
+          @supports (-webkit-touch-callout: none) {
+            body {
+              -webkit-text-size-adjust: 100%;
+              -webkit-tap-highlight-color: transparent;
+            }
+          }
+        ` }} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

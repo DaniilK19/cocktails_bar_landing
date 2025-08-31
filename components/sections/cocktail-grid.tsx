@@ -1,248 +1,318 @@
 "use client"
 
 import { useEffect, useRef, useState, useMemo, useCallback } from "react"
-import { motion } from "framer-motion"
-import { gsap } from "@/lib/gsap"
+import { motion, AnimatePresence } from "framer-motion"
 import { cocktails } from "@/data/cocktails"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { CocktailItem } from "@/components/ui/cocktail-item"
+import Image from "next/image"
 
 export function CocktailGrid() {
   const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [isAutoPlay, setIsAutoPlay] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+  const [touchStart, setTouchStart] = useState(0)
+  const [touchEnd, setTouchEnd] = useState(0)
 
   useEffect(() => {
-    if (!sectionRef.current) return
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(headerRef.current,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: "top 85%",
-            once: true
-          }
-        }
-      )
-
-      gsap.fromTo(contentRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          delay: 0.2,
-          scrollTrigger: {
-            trigger: contentRef.current,
-            start: "top 85%",
-            once: true
-          }
-        }
-      )
-    }, sectionRef)
-
-    return () => ctx.revert()
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  // Auto-play carousel
   useEffect(() => {
     if (!isAutoPlay) return
     
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % cocktails.length)
-    }, 4000)
+    }, 5000)
 
     return () => clearInterval(interval)
   }, [isAutoPlay])
 
-
   const activeCocktail = cocktails[activeIndex]
 
-  // Memoize expensive transform calculations
-  const transformsData = useMemo(() => {
-    return cocktails.map((_, index) => {
-      const offset = index - activeIndex
-      const isActive = index === activeIndex
-      const absOffset = Math.abs(offset)
-      
-      // Hide items that are too far away
-      if (absOffset > 2) {
-        return { visible: false }
-      }
-      
-      return {
-        visible: true,
-        offset,
-        isActive,
-        absOffset,
-        translateX: offset * 180,
-        rotateY: offset * -45,
-        scale: isActive ? 1 : 0.7 - (absOffset * 0.1),
-        zIndex: isActive ? 20 : 20 - absOffset,
-        opacity: isActive ? 1 : 0.6 - (absOffset * 0.2),
-      }
-    })
-  }, [activeIndex])
-
-  // Memoize navigation handlers to prevent unnecessary re-renders
+  // Navigation handlers
   const handleNextSlide = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % cocktails.length)
     setIsAutoPlay(false)
-    setTimeout(() => setIsAutoPlay(true), 5000)
+    setTimeout(() => setIsAutoPlay(true), 8000)
   }, [])
 
   const handlePrevSlide = useCallback(() => {
     setActiveIndex((prev) => (prev - 1 + cocktails.length) % cocktails.length)
     setIsAutoPlay(false)
-    setTimeout(() => setIsAutoPlay(true), 5000)
+    setTimeout(() => setIsAutoPlay(true), 8000)
   }, [])
 
   const handleGoToSlide = useCallback((index: number) => {
     setActiveIndex(index)
     setIsAutoPlay(false)
-    setTimeout(() => setIsAutoPlay(true), 5000)
+    setTimeout(() => setIsAutoPlay(true), 8000)
   }, [])
 
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > 50
+    const isRightSwipe = distance < -50
+
+    if (isLeftSwipe) {
+      handleNextSlide()
+    }
+    if (isRightSwipe) {
+      handlePrevSlide()
+    }
+  }
+
+  // Calculate visible items for carousel
+  const visibleItems = useMemo(() => {
+    if (isMobile) {
+      // Mobile: show only active item
+      return [activeIndex]
+    } else {
+      // Desktop: show 3 items
+      const prev = (activeIndex - 1 + cocktails.length) % cocktails.length
+      const next = (activeIndex + 1) % cocktails.length
+      return [prev, activeIndex, next]
+    }
+  }, [activeIndex, isMobile])
+
   return (
-    <section ref={sectionRef} className="py-40 px-4 sm:px-6 lg:px-8 relative overflow-visible bg-gradient-to-b from-aristocrat-void via-aristocrat-void/98 to-aristocrat-void" style={{perspective: '1000px'}}>
-      
-      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Gallery Header */}
-        <div ref={headerRef} className="text-center mb-16 lg:mb-24">
-          <div className="aristocrat-subtext mb-6 lg:mb-8 text-aristocrat-cream/60 text-sm lg:text-base">
-            — Galerie d&apos;Art Liquide —
-          </div>
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-light mb-8 lg:mb-12 serif tracking-tight">
-            <span className="text-aristocrat-white">COLLECTION</span>
-            <br />
-            <span className="text-aristocrat-cream font-extralight italic">Privée</span>
+    <section 
+      ref={sectionRef} 
+      className="section bg-gradient-to-b from-aristocrat-void to-aristocrat-obsidian overflow-hidden"
+    >
+      <div className="container">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-8 sm:mb-12 md:mb-16"
+        >
+          <p className="text-xs sm:text-sm md:text-base text-aristocrat-cream/60 font-light tracking-[0.2em] uppercase mb-4">
+            — Collection Exclusive —
+          </p>
+          <h2 className="text-title serif mb-4">
+            <span className="text-aristocrat-white">NOS</span>{" "}
+            <span className="text-aristocrat-cream italic">CRÉATIONS</span>
           </h2>
-          <div className="w-24 lg:w-32 h-px bg-gradient-to-r from-transparent via-aristocrat-charcoal to-transparent mx-auto"></div>
-        </div>
+          <div className="w-16 sm:w-20 md:w-24 h-px bg-aristocrat-cream/20 mx-auto" />
+        </motion.div>
 
-        {/* Coverflow Gallery Display */}
-        <div ref={contentRef} className="relative">
-          {/* Coverflow Container */}
-          <div className="max-w-7xl mx-auto mb-20 lg:mb-32">
-            
-            {/* Coverflow Showcase */}
-            <div className="relative h-[500px] lg:h-[600px] flex items-center justify-center overflow-hidden">
-              
-              {/* Coverflow Items */}
-              <div className="relative w-full h-full flex items-center justify-center">
-                {cocktails.map((cocktail, index) => {
-                  const transformData = transformsData[index]
-                  
-                  // Hide items that are too far away
-                  if (!transformData.visible) return null
-                  
-                  const { 
-                    isActive = false, 
-                    translateX = 0, 
-                    rotateY = 0, 
-                    scale = 1, 
-                    zIndex = 0, 
-                    opacity = 1 
-                  } = transformData
-                  
-                  return (
-                    <CocktailItem
-                      key={index}
-                      cocktail={cocktail}
-                      isActive={isActive}
-                      translateX={translateX}
-                      rotateY={rotateY}
-                      scale={scale}
-                      zIndex={zIndex}
-                      opacity={opacity}
-                      onClick={() => handleGoToSlide(index)}
-                    />
-                  )
-                })}
-              </div>
-            </div>
-            
-            {/* Current Item Details */}
-            <div className="text-center mt-12 lg:mt-16">
-              <div className="max-w-2xl mx-auto">
+        {/* Mobile Carousel / Desktop Grid */}
+        <div className="relative">
+          {/* Mobile View - Swipeable Carousel */}
+          <div className="md:hidden">
+            <div
+              className="relative overflow-hidden touch-pan-y"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              <AnimatePresence mode="wait">
                 <motion.div
-                  key={`details-${activeIndex}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
+                  key={activeIndex}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative"
                 >
-                  <div className="aristocrat-subtext mb-4">
-                    Collection Privée • Œuvre {activeIndex + 1} sur {cocktails.length}
+                  {/* Cocktail Card */}
+                  <div className="bg-aristocrat-obsidian/40 backdrop-blur-sm border border-aristocrat-charcoal/20 rounded-lg overflow-hidden">
+                    <div className="relative aspect-[4/5]">
+                      <Image
+                        src={activeCocktail.image}
+                        alt={activeCocktail.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 400px"
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-aristocrat-void/80 via-transparent to-transparent" />
+                    </div>
+                    
+                    <div className="p-6">
+                      <h3 className="text-xl font-light serif text-aristocrat-white mb-2">
+                        {activeCocktail.name}
+                      </h3>
+                      <p className="text-sm text-aristocrat-cream/70 mb-4">
+                        {activeCocktail.price}
+                      </p>
+                      <p className="text-sm text-aristocrat-cream/60 leading-relaxed">
+                        {activeCocktail.description}
+                      </p>
+                      
+                      {/* Ingredients */}
+                      <div className="mt-4 pt-4 border-t border-aristocrat-charcoal/20">
+                        <p className="text-xs text-aristocrat-gray uppercase tracking-wider mb-2">
+                          Ingrédients
+                        </p>
+                        <p className="text-xs text-aristocrat-cream/50">
+                          {activeCocktail.ingredients.join(" · ")}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <h2 className="text-3xl lg:text-4xl font-light serif text-aristocrat-white mb-4">
-                    {activeCocktail.name}
-                  </h2>
-                  <p className="text-aristocrat-cream/80 font-extralight leading-relaxed">
-                    {activeCocktail.description}
-                  </p>
                 </motion.div>
-              </div>
-            </div>
-          </div>
+              </AnimatePresence>
 
-          {/* Coverflow Navigation */}
-          <div className="flex flex-col items-center gap-8 mt-16">
-            
-            {/* Navigation Controls */}
-            <div className="flex items-center gap-12">
-              <button
-                onClick={handlePrevSlide}
-                className="p-4 border border-aristocrat-charcoal/20 hover:border-aristocrat-cream/40 text-aristocrat-gray hover:text-aristocrat-white transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-aristocrat-cream focus:ring-offset-2 focus:ring-offset-aristocrat-void"
-                aria-label="Cocktail précédent"
-                title="Précédent"
-              >
-                <ChevronLeft className="w-6 h-6" aria-hidden="true" />
-              </button>
-              
-              {/* Progress Dots */}
-              <div className="flex items-center gap-3">
-                {cocktails.map((cocktail, index) => (
+              {/* Mobile Navigation Dots */}
+              <div className="flex justify-center gap-2 mt-6">
+                {cocktails.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => handleGoToSlide(index)}
-                    className={`transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-aristocrat-cream focus:ring-offset-2 focus:ring-offset-aristocrat-void ${
+                    className={`transition-all duration-300 ${
                       index === activeIndex 
-                        ? 'w-3 h-3 bg-aristocrat-cream rounded-full' 
-                        : 'w-2 h-2 bg-aristocrat-charcoal hover:bg-aristocrat-gray rounded-full'
+                        ? 'w-8 h-2 bg-aristocrat-cream rounded-full' 
+                        : 'w-2 h-2 bg-aristocrat-charcoal rounded-full'
                     }`}
-                    aria-label={`Aller au cocktail ${cocktail.name}`}
-                    aria-current={index === activeIndex ? 'true' : 'false'}
+                    aria-label={`Aller au cocktail ${index + 1}`}
                   />
                 ))}
               </div>
+
+              {/* Swipe Hint */}
+              <p className="text-center text-xs text-aristocrat-gray/60 mt-4">
+                Glissez pour découvrir
+              </p>
+            </div>
+          </div>
+
+          {/* Desktop View - 3D Carousel */}
+          <div className="hidden md:block">
+            <div className="relative h-[500px] lg:h-[600px] flex items-center justify-center">
+              <div className="relative w-full max-w-5xl mx-auto">
+                {cocktails.map((cocktail, index) => {
+                  const isVisible = visibleItems.includes(index)
+                  const isActive = index === activeIndex
+                  const position = visibleItems.indexOf(index)
+                  
+                  if (!isVisible) return null
+
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{
+                        opacity: isActive ? 1 : 0.6,
+                        scale: isActive ? 1 : 0.85,
+                        x: position === 0 ? '-120%' : position === 2 ? '120%' : '0%',
+                        z: isActive ? 100 : 0,
+                        rotateY: position === 0 ? 25 : position === 2 ? -25 : 0,
+                      }}
+                      transition={{ duration: 0.5 }}
+                      className="absolute w-[280px] lg:w-[320px] cursor-pointer"
+                      onClick={() => !isActive && handleGoToSlide(index)}
+                      style={{
+                        transformStyle: 'preserve-3d',
+                        perspective: '1000px',
+                      }}
+                    >
+                      <div className="bg-aristocrat-obsidian/60 backdrop-blur-sm border border-aristocrat-charcoal/30 rounded-lg overflow-hidden shadow-2xl">
+                        <div className="relative aspect-[3/4]">
+                          <Image
+                            src={cocktail.image}
+                            alt={cocktail.name}
+                            fill
+                            sizes="320px"
+                            className="object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-aristocrat-void/90 via-transparent to-transparent" />
+                          
+                          {isActive && (
+                            <div className="absolute bottom-0 left-0 right-0 p-6">
+                              <h3 className="text-2xl font-light serif text-aristocrat-white mb-2">
+                                {cocktail.name}
+                              </h3>
+                              <p className="text-aristocrat-cream/80">
+                                {cocktail.price}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )
+                })}
+              </div>
+
+              {/* Desktop Navigation Arrows */}
+              <button
+                onClick={handlePrevSlide}
+                className="absolute left-4 lg:left-8 p-3 bg-aristocrat-void/60 backdrop-blur-sm border border-aristocrat-charcoal/20 rounded-full text-aristocrat-cream hover:bg-aristocrat-void/80 transition-all duration-300"
+                aria-label="Cocktail précédent"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
               
               <button
                 onClick={handleNextSlide}
-                className="p-4 border border-aristocrat-charcoal/20 hover:border-aristocrat-cream/40 text-aristocrat-gray hover:text-aristocrat-white transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-aristocrat-cream focus:ring-offset-2 focus:ring-offset-aristocrat-void"
+                className="absolute right-4 lg:right-8 p-3 bg-aristocrat-void/60 backdrop-blur-sm border border-aristocrat-charcoal/20 rounded-full text-aristocrat-cream hover:bg-aristocrat-void/80 transition-all duration-300"
                 aria-label="Cocktail suivant"
-                title="Suivant"
               >
-                <ChevronRight className="w-6 h-6" aria-hidden="true" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
-            
-            {/* Exhibition Info */}
-            <div className="text-center pt-8 border-t border-aristocrat-charcoal/20 max-w-3xl">
-              <div className="aristocrat-subtext text-xs mb-3">
-                Collection Privée — Maison Cocktail — Paris
-              </div>
-              <p className="text-sm text-aristocrat-cream/60 font-extralight leading-relaxed">
-                Parcourez notre collection exclusive d&apos;art liquide, où chaque création<br className="hidden lg:block" />
-                représente l&apos;essence même du raffinement français
+
+            {/* Desktop Details */}
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center mt-12 max-w-2xl mx-auto"
+            >
+              <h3 className="text-2xl lg:text-3xl font-light serif text-aristocrat-white mb-4">
+                {activeCocktail.name}
+              </h3>
+              <p className="text-aristocrat-cream/70 mb-6">
+                {activeCocktail.description}
               </p>
+              <div className="flex justify-center gap-8">
+                <div>
+                  <p className="text-xs text-aristocrat-gray uppercase tracking-wider mb-1">Prix</p>
+                  <p className="text-aristocrat-cream">{activeCocktail.price}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-aristocrat-gray uppercase tracking-wider mb-1">Service</p>
+                  <p className="text-aristocrat-cream">17h - 02h</p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Desktop Navigation Dots */}
+            <div className="flex justify-center gap-3 mt-8">
+              {cocktails.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleGoToSlide(index)}
+                  className={`transition-all duration-300 ${
+                    index === activeIndex 
+                      ? 'w-3 h-3 bg-aristocrat-cream rounded-full' 
+                      : 'w-2 h-2 bg-aristocrat-charcoal hover:bg-aristocrat-gray rounded-full'
+                  }`}
+                  aria-label={`Aller au cocktail ${index + 1}`}
+                />
+              ))}
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ export interface Cocktail {
   category: string
   alcohol: number
   color: string
+  price: string
 }
 
 export const cocktails: Cocktail[] = [
@@ -33,7 +34,8 @@ export const cocktails: Cocktail[] = [
     ],
     category: "Tropical",
     alcohol: 20,
-    color: "gradient-to-br from-cocktail-yellow via-cocktail-orange to-cocktail-red"
+    color: "gradient-to-br from-cocktail-yellow via-cocktail-orange to-cocktail-red",
+    price: "€18"
   },
   {
     id: "2",
@@ -55,7 +57,8 @@ export const cocktails: Cocktail[] = [
     ],
     category: "Tropical",
     alcohol: 18,
-    color: "gradient-to-br from-cocktail-blue to-blue-600"
+    color: "gradient-to-br from-cocktail-blue to-blue-600",
+    price: "€20"
   },
   {
     id: "3",
@@ -79,7 +82,8 @@ export const cocktails: Cocktail[] = [
     ],
     category: "Herbal",
     alcohol: 15,
-    color: "gradient-to-br from-cocktail-green to-green-600"
+    color: "gradient-to-br from-cocktail-green to-green-600",
+    price: "€19"
   },
   {
     id: "4",
@@ -102,7 +106,8 @@ export const cocktails: Cocktail[] = [
     ],
     category: "Elegant",
     alcohol: 22,
-    color: "gradient-to-br from-cocktail-purple to-purple-600"
+    color: "gradient-to-br from-cocktail-purple to-purple-600",
+    price: "€22"
   },
   {
     id: "5",
@@ -125,7 +130,8 @@ export const cocktails: Cocktail[] = [
     ],
     category: "Classic",
     alcohol: 25,
-    color: "gradient-to-br from-cocktail-yellow to-yellow-600"
+    color: "gradient-to-br from-cocktail-yellow to-yellow-600",
+    price: "€21"
   },
   {
     id: "6",
@@ -150,7 +156,8 @@ export const cocktails: Cocktail[] = [
     ],
     category: "Sparkling",
     alcohol: 12,
-    color: "gradient-to-br from-cocktail-red to-red-600"
+    color: "gradient-to-br from-cocktail-red to-red-600",
+    price: "€24"
   },
   {
     id: "7",
@@ -173,6 +180,7 @@ export const cocktails: Cocktail[] = [
     ],
     category: "Dark",
     alcohol: 20,
-    color: "gradient-to-br from-gray-800 to-gray-600"
+    color: "gradient-to-br from-gray-800 to-gray-600",
+    price: "€20"
   }
 ]
