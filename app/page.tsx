@@ -1,4 +1,4 @@
-import { Hero } from "@/components/sections/hero"
+import { Hero } from "@/components/sections/Hero"
 import { FAQ } from "@/components/sections/faq"
 import dynamic from "next/dynamic"
 
@@ -28,9 +28,7 @@ const About = dynamic(
 export default function Home() {
   return (
     <main className="relative">
-      <section id="home">
-        <Hero />
-      </section>
+      <Hero />
       <section id="cocktails">
         <CocktailGrid />
       </section>  
