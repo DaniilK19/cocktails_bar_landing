@@ -121,7 +121,7 @@ export function Hero() {
         padding: 0
       }}
     >
-      {/* Background Image - Enhanced with Parallax */}
+      {/* Background Image - Simple Dark Overlay */}
       <div ref={bgRef} className={`absolute inset-0 z-0 ${!isMobile ? 'will-change-transform' : ''}`}>
         <Image
           src="/images/optimized/hero.webp"
@@ -133,12 +133,12 @@ export function Hero() {
           className="object-cover object-center"
           style={{ 
             transform: isMobile ? 'none' : 'scale(1.05)',
-            filter: isMobile ? 'brightness(0.7)' : 'brightness(0.8)'
+            filter: 'brightness(0.4)'
           }}
         />
         <div 
           ref={overlayRef}
-          className={`absolute inset-0 bg-gradient-to-b from-aristocrat-void/50 via-aristocrat-void/30 to-aristocrat-void/70 lg:from-aristocrat-void/40 lg:via-aristocrat-void/20 lg:to-aristocrat-void/60 ${!isMobile ? 'will-change-auto' : ''}`}
+          className={`absolute inset-0 bg-aristocrat-void/60 ${!isMobile ? 'will-change-auto' : ''}`}
         />
       </div>
 
