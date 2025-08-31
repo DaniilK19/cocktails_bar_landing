@@ -43,15 +43,24 @@ const ValueCard = memo(({ principle }: { principle: typeof principles[0] }) => {
   const Icon = principle.icon
   
   return (
-    <div className="mb-6">
-      <div className="flex items-start gap-3 p-3 bg-aristocrat-obsidian/30 border border-aristocrat-charcoal/20">
-        <span className="text-2xl text-aristocrat-cream/90 font-light w-8 flex-shrink-0">{principle.number}</span>
-        <Icon className="w-6 h-6 text-aristocrat-gray mt-1 flex-shrink-0" />
-        <div className="min-w-0 flex-1">
-          <h4 className="text-xl font-light text-aristocrat-white mb-1">{principle.title}</h4>
-          <p className="text-sm text-aristocrat-cream/60 mb-3">{principle.description}</p>
-          <p className="text-aristocrat-cream/75 text-sm leading-relaxed mb-3">{principle.details}</p>
-          <span className="text-xs text-aristocrat-cream/50 uppercase tracking-wider">{principle.stats}</span>
+    <div className="group">
+      <div className="text-center p-8 bg-aristocrat-obsidian/20 border border-aristocrat-charcoal/20 rounded-lg hover:bg-aristocrat-obsidian/30 hover:border-aristocrat-charcoal/30 transition-all duration-300">
+        {/* Icon and Number */}
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <span className="text-sm text-aristocrat-cream/60 font-light tracking-wider">{principle.number}</span>
+          <Icon className="w-5 h-5 text-aristocrat-cream/50" />
+        </div>
+        
+        {/* Content */}
+        <div>
+          <h4 className="text-xl font-light serif text-aristocrat-white mb-3 leading-tight">{principle.title}</h4>
+          <p className="text-sm text-aristocrat-cream/60 uppercase tracking-wider mb-4 font-light">{principle.description}</p>
+          <p className="text-aristocrat-cream/75 text-base leading-relaxed mb-4 font-light">{principle.details}</p>
+          
+          {/* Stats */}
+          <div className="pt-4 border-t border-aristocrat-charcoal/20">
+            <span className="text-xs text-aristocrat-cream/50 uppercase tracking-widest font-light">{principle.stats}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -69,59 +78,64 @@ const AboutComponent = () => {
   }, [])
 
   return (
-    <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-aristocrat-void to-aristocrat-obsidian">
-      <div className="max-w-5xl mx-auto">
-        {/* Story Section */}
-        <div className="text-center mb-16 md:mb-20">
-          <p className="text-sm text-aristocrat-cream/60 uppercase tracking-widest mb-4">
-            Notre Histoire
+    <section className="section bg-gradient-to-b from-aristocrat-void to-aristocrat-obsidian">
+      <div className="container">
+        {/* Simple, Elegant Content */}
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Clean Header */}
+          <p className="text-xs sm:text-sm text-aristocrat-cream/60 font-light tracking-widest uppercase mb-8">
+            — Notre Histoire —
           </p>
           
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light serif mb-6 text-aristocrat-white">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light serif mb-12 text-aristocrat-white">
             L&apos;Art de la <span className="text-aristocrat-cream italic">Mixologie</span>
           </h2>
-          
-          <div className="w-16 h-px bg-aristocrat-cream/30 mx-auto mb-8" />
 
-          <div className="max-w-3xl mx-auto space-y-6 text-aristocrat-cream/80 leading-relaxed text-base md:text-lg">
-            <p>{seoContent.about.intro}</p>
+          {/* Quote Style Introduction */}
+          <div className="mb-16">
+            <blockquote className="text-xl md:text-2xl text-aristocrat-cream/80 font-light italic leading-relaxed mb-8">
+              &ldquo;Depuis 1924, nous cultivons l&apos;art du cocktail français avec la précision d&apos;un maître horloger et la passion d&apos;un artiste.&rdquo;
+            </blockquote>
+            <cite className="text-sm text-aristocrat-cream/60 not-italic">— Maison Cocktail, Place Vendôme</cite>
+          </div>
+
+          {/* Story Paragraphs */}
+          <div className="max-w-3xl mx-auto space-y-6 text-lg text-aristocrat-cream/80 font-light leading-relaxed mb-16">
             <p>
-              Chaque création naît d&apos;une recherche minutieuse, d&apos;une sélection 
-              rigoureuse des meilleurs ingrédients et d&apos;un savoir-faire transmis 
-              de génération en génération.
+              Chaque création naît d&apos;une recherche minutieuse, d&apos;une sélection rigoureuse 
+              des meilleurs ingrédients et d&apos;un savoir-faire transmis de génération en génération.
             </p>
             <p>
-              Notre atelier parisien cultive l&apos;excellence, créant des expériences 
-              sensorielles uniques pour une clientèle exigeante.
+              Notre atelier parisien cultive l&apos;excellence, créant des expériences sensorielles 
+              uniques pour une clientèle exigeante qui apprécie l&apos;authenticité française.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+          {/* Minimal Values Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+            {principles.map((principle) => (
+              <div key={principle.number} className="text-center">
+                <principle.icon className="w-6 h-6 text-aristocrat-cream/50 mx-auto mb-3" />
+                <h4 className="text-sm font-light serif text-aristocrat-white mb-2">{principle.title}</h4>
+                <p className="text-xs text-aristocrat-cream/50 uppercase tracking-wider">{principle.stats}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Simple CTA */}
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
             <button
               onClick={() => scrollToSection('#cocktails')}
-              className="px-8 py-3 bg-aristocrat-cream/15 border border-aristocrat-cream/30 text-aristocrat-cream text-sm uppercase tracking-wider hover:bg-aristocrat-cream/25 transition-colors"
+              className="px-8 py-3 bg-aristocrat-cream/15 border border-aristocrat-cream/30 text-aristocrat-cream font-light tracking-wider uppercase text-sm hover:bg-aristocrat-cream/25 transition-all duration-300"
             >
               Nos Créations
             </button>
             <button
               onClick={() => scrollToSection('#contact')}
-              className="px-8 py-3 border border-aristocrat-charcoal/40 text-aristocrat-cream/80 text-sm uppercase tracking-wider hover:text-aristocrat-cream hover:border-aristocrat-cream/50 transition-colors"
+              className="px-8 py-3 border border-aristocrat-charcoal/40 text-aristocrat-cream/80 font-light tracking-wider uppercase text-sm hover:text-aristocrat-cream hover:border-aristocrat-cream/50 transition-all duration-300"
             >
               Réserver
             </button>
-          </div>
-        </div>
-
-        {/* Values Section */}
-        <div className="max-w-4xl mx-auto">
-          <h3 className="text-2xl sm:text-3xl font-light serif text-aristocrat-white mb-8 text-center">
-            Nos Valeurs
-          </h3>
-
-          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-            {principles.map((principle) => (
-              <ValueCard key={principle.number} principle={principle} />
-            ))}
           </div>
         </div>
       </div>
