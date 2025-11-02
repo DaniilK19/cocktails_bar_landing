@@ -40,12 +40,12 @@ describe('useMediaQuery', () => {
   })
 
   it('should update when media query changes', async () => {
-    let listener: ((e: MediaQueryListEvent) => void) | null = null
+    let listener: ((e: MediaQueryListEvent) => void) | undefined
 
     mockMatchMedia.mockReturnValue({
       matches: false,
       media: '(min-width: 768px)',
-      addEventListener: jest.fn((_, cb) => {
+      addEventListener: jest.fn((_, cb: (e: MediaQueryListEvent) => void) => {
         listener = cb
       }),
       removeEventListener: jest.fn(),
@@ -58,7 +58,10 @@ describe('useMediaQuery', () => {
 
     // Simulate media query change
     if (listener) {
-      listener({ matches: true } as MediaQueryListEvent)
+      listener({
+        matches: true,
+        media: '(min-width: 768px)',
+      } as MediaQueryListEvent)
     }
 
     await waitFor(() => {
