@@ -121,6 +121,11 @@ describe('useIntersectionObserver', () => {
     const enteringEntry = {
       isIntersecting: true,
       target: mockElement,
+      boundingClientRect: {} as DOMRectReadOnly,
+      intersectionRatio: 0.5,
+      intersectionRect: {} as DOMRectReadOnly,
+      rootBounds: null,
+      time: Date.now(),
     } as IntersectionObserverEntry
 
     await waitFor(() => {
@@ -133,6 +138,11 @@ describe('useIntersectionObserver', () => {
     const leavingEntry = {
       isIntersecting: false,
       target: mockElement,
+      boundingClientRect: {} as DOMRectReadOnly,
+      intersectionRatio: 0,
+      intersectionRect: {} as DOMRectReadOnly,
+      rootBounds: null,
+      time: Date.now(),
     } as IntersectionObserverEntry
 
     await waitFor(() => {
@@ -191,9 +201,33 @@ describe('useIntersectionObserver', () => {
 
     // Simulate multiple intersections
     const entries = [
-      { isIntersecting: true, target: mockElement } as IntersectionObserverEntry,
-      { isIntersecting: false, target: mockElement } as IntersectionObserverEntry,
-      { isIntersecting: true, target: mockElement } as IntersectionObserverEntry,
+      {
+        isIntersecting: true,
+        target: mockElement,
+        boundingClientRect: {} as DOMRectReadOnly,
+        intersectionRatio: 0.5,
+        intersectionRect: {} as DOMRectReadOnly,
+        rootBounds: null,
+        time: Date.now(),
+      } as IntersectionObserverEntry,
+      {
+        isIntersecting: false,
+        target: mockElement,
+        boundingClientRect: {} as DOMRectReadOnly,
+        intersectionRatio: 0,
+        intersectionRect: {} as DOMRectReadOnly,
+        rootBounds: null,
+        time: Date.now(),
+      } as IntersectionObserverEntry,
+      {
+        isIntersecting: true,
+        target: mockElement,
+        boundingClientRect: {} as DOMRectReadOnly,
+        intersectionRatio: 0.5,
+        intersectionRect: {} as DOMRectReadOnly,
+        rootBounds: null,
+        time: Date.now(),
+      } as IntersectionObserverEntry,
     ]
 
     for (const entry of entries) {
