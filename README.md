@@ -1,11 +1,17 @@
 # 🍸 Maison Cocktail
 
-Elegant landing page for a premium Parisian cocktail bar  
+Elegant landing page for a premium Parisian cocktail bar
 
 <div align="center">
   <img src="public/images/optimized/hero.webp" alt="Maison Cocktail Preview" width="800" style="border-radius: 14px;" />
-  
+
   [🚀 Live Demo](https://maisoncocktail.vercel.app) · [⭐ Star on GitHub](https://github.com/DaniilK19/cocktails_bar)
+
+  <br />
+  <br />
+
+  ![CI](https://github.com/DaniilK19/cocktails_bar_landing/actions/workflows/ci.yml/badge.svg)
+  [![Vercel](https://vercelbadges.vercel.app/api/DaniilK19/cocktails_bar_landing)](https://maisoncocktail.vercel.app)
 </div>
 
 ---
@@ -30,11 +36,14 @@ Elegant landing page for a premium Parisian cocktail bar
 ---
 
 ## ✨ Features
-- 🎨 Elegant Parisian-inspired design  
-- 📱 Responsive & mobile-first  
-- ⚡ Optimized images & fast loading  
-- 🎬 Smooth animations & interactive gallery  
-- 🔍 SEO-friendly & perfect Lighthouse scores  
+- 🎨 Elegant Parisian-inspired design
+- 📱 Responsive & mobile-first
+- ⚡ Optimized images & fast loading
+- 🎬 Smooth animations & interactive gallery
+- 🔍 SEO-friendly & perfect Lighthouse scores
+- 📅 Online table booking with form validation
+- 🧪 Comprehensive test coverage (Unit + E2E)
+- 🚀 CI/CD pipeline with GitHub Actions  
 
 ---
 
