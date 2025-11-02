@@ -1,5 +1,6 @@
 import { Hero } from "@/components/sections/hero"
 import { FAQ } from "@/components/sections/faq"
+import { Booking } from "@/components/sections/booking"
 import dynamic from "next/dynamic"
 
 // Lazy load heavy components for better initial performance
@@ -35,6 +36,7 @@ export default function Home() {
       <section id="about">
         <About />
       </section>
+      <Booking />
       <FAQ />
       <section id="contact" className="relative overflow-hidden safe-top safe-bottom">
         
