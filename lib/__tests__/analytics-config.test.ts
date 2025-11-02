@@ -45,19 +45,19 @@ describe('shouldLoadAnalytics', () => {
   })
 
   it('should return false in development without flag', () => {
-    process.env.NODE_ENV = 'development'
+    Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', writable: true })
     process.env.NEXT_PUBLIC_ENABLE_ANALYTICS_DEV = undefined
     expect(shouldLoadAnalytics()).toBe(false)
   })
 
   it('should return true in development with flag', () => {
-    process.env.NODE_ENV = 'development'
+    Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', writable: true })
     process.env.NEXT_PUBLIC_ENABLE_ANALYTICS_DEV = 'true'
     expect(shouldLoadAnalytics()).toBe(true)
   })
 
   it('should return true in production', () => {
-    process.env.NODE_ENV = 'production'
+    Object.defineProperty(process.env, 'NODE_ENV', { value: 'production', writable: true })
     expect(shouldLoadAnalytics()).toBe(true)
   })
 })
@@ -69,7 +69,7 @@ describe('initializeAnalytics', () => {
   beforeEach(() => {
     jest.resetModules()
     process.env = { ...originalEnv }
-    process.env.NODE_ENV = 'production'
+    Object.defineProperty(process.env, 'NODE_ENV', { value: 'production', writable: true })
     ;(global as any).window = {
       gtag: mockGtag,
     }
@@ -103,7 +103,7 @@ describe('initializeAnalytics', () => {
   })
 
   it('should not initialize in development', () => {
-    process.env.NODE_ENV = 'development'
+    Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', writable: true })
     localStorage.setItem('analytics-consent', 'true')
     initializeAnalytics()
 
