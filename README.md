@@ -292,18 +292,6 @@ Tests run on:
 
 <br />
 
-## 📝 Documentation
-
-Detailed development documentation is available in [CLAUDE.md](CLAUDE.md), including:
-
-- Development workflow
-- Architecture patterns
-- Component guidelines
-- Performance optimization
-- CI/CD pipeline details
-
-<br />
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines.
