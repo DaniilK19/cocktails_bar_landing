@@ -196,7 +196,6 @@ cocktails_bar_landing/
 ├── e2e/                      # Playwright E2E tests
 ├── __tests__/                # Jest unit tests
 ├── .github/workflows/        # CI/CD pipelines
-└── CLAUDE.md                 # Project documentation
 ```
 
 <br />
